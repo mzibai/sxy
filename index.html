@@ -1,1 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>咕咕密码</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f7eee9 0%, #e3d5ca 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 16px;
+        }
+        .card {
+            max-width: 420px;
+            width: 100%;
+            background: rgba(255, 250, 245, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 32px 24px 40px;
+            box-shadow: 0 25px 50px -12px rgba(60, 45, 35, 0.30),
+                        0 2px 10px 0 rgba(120, 80, 65, 0.08);
+            border: 1px solid rgba(230, 210, 195, 0.4);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: #4d342b;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        h1 small {
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.6;
+        }
+        .subhead {
+            color: #7a5f52;
+            font-size: 15px;
+            margin-bottom: 28px;
+            border-bottom: 1px dashed #dccfc4;
+            padding-bottom: 20px;
+            font-weight: 300;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+        .input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #62493e;
+            letter-spacing: 0.3px;
+            margin-left: 6px;
+        }
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 36px;
+            border: 1.5px solid #ded0c4;
+            transition: border 0.15s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(90, 70, 55, 0.04);
+        }
+        .password-wrapper:focus-within {
+            border-color: #bb927c;
+            box-shadow: 0 0 0 4px rgba(180, 130, 110, 0.15);
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding: 16px 18px;
+            border: none;
+            background: transparent;
+            font-size: 17px;
+            outline: none;
+            color: #35261f;
+            font-weight: 450;
+            letter-spacing: 0.5px;
+            border-radius: 36px;
+        }
+        .password-wrapper input::placeholder {
+            color: #b8a395;
+            font-weight: 350;
+            font-size: 15px;
+            letter-spacing: 0px;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 6px;
+        }
+        .btn {
+            background: #f0e3da;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 42px;
+            font-weight: 550;
+            font-size: 16px;
+            color: #412f27;
+            cursor: pointer;
+            transition: 0.15s ease;
+            box-shadow: 0 4px 8px rgba(140, 105, 85, 0.06);
+            flex: 1 1 auto;
+            min-width: 112px;
+            border: 1px solid #ddd0c2;
+            letter-spacing: 0.4px;
+        }
+        .btn-primary {
+            background: #ab7f68;
+            border-color: #946c56;
+            color: white;
+            box-shadow: 0 6px 12px rgba(150, 108, 86, 0.20);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #9a6f58;
+            transform: scale(0.97);
+            box-shadow: 0 4px 10px rgba(135, 95, 74, 0.25);
+        }
+        .btn-primary:active:not(:disabled) {
+            background: #885e49;
+            transform: scale(0.94);
+        }
+        .btn-secondary {
+            background: #ece0d7;
+            color: #402f26;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: #dfcfc3;
+            transform: scale(0.96);
+        }
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            filter: grayscale(0.3);
+            transform: none !important;
+            box-shadow: none;
+        }
+        .secret-area {
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 1.5px dashed #dacabc;
+            transition: opacity 0.25s;
+        }
+        .secret-badge {
+            background: #fffaf5;
+            border-radius: 64px;
+            padding: 14px 18px;
+            border: 1px solid #dccfc2;
+            box-shadow: inset 0 1px 5px rgba(160, 125, 104, 0.05);
+            display: inline-block;
+            min-width: 160px;
+            backdrop-filter: blur(4px);
+        }
+        .secret-code {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #392a21;
+            font-family: 'Courier New', monospace;
+            background: #efe4db;
+            padding: 8px 20px;
+            border-radius: 44px;
+            display: inline-block;
+            margin-top: 10px;
+            box-shadow: 0 2px 10px rgba(115, 82, 62, 0.08);
+        }
+        .hint-message {
+            font-size: 14px;
+            color: #866b5b;
+            margin-top: 14px;
+            font-weight: 360;
+            min-height: 26px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 10px;
+            margin-right: 6px;
+            background: #bbb1a6;
+            transition: background 0.2s;
+        }
+        .status-dot.active {
+            background: #588157;
+            box-shadow: 0 0 0 3px rgba(88, 129, 87, 0.2);
+        }
+        .footer-note {
+            margin-top: 24px;
+            font-size: 11px;
+            color: #ad988b;
+            opacity: 0.6;
+        }
+        @media (max-width: 440px) {
+            .card { padding: 24px 16px; }
+            .btn { min-width: 90px; padding: 12px 16px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
 
+<div class="card" role="main">
+    <h1>
+        🕊️ 咕咕
+        <small>· 秘巢</small>
+    </h1>
+    <div class="subhead">暗号确认 · 得见玄机</div>
+
+    <!-- 密码输入区 -->
+    <div class="input-group">
+        <label for="pwdInput">
+            <span class="status-dot" id="statusDot"></span> 通行密令
+        </label>
+        <div class="password-wrapper">
+            <input type="password" id="pwdInput" placeholder="请输入 XY" autocomplete="off" spellcheck="false" />
+        </div>
+    </div>
+
+    <!-- 操作按钮组 -->
+    <div class="actions">
+        <button class="btn btn-primary" id="verifyBtn">🔓 验证密令</button>
+        <button class="btn btn-secondary" id="revealBtn" disabled>🐣 获得咕咕密码</button>
+    </div>
+
+    <!-- 秘密显示区域 -->
+    <div class="secret-area" id="secretArea" style="opacity:0;">
+        <div class="secret-badge">
+            <span style="font-size: 15px; color:#533f34;">✨ 咕咕密码 ✨</span>
+            <div class="secret-code" id="secretCode">1234</div>
+        </div>
+        <div class="hint-message" id="hintMsg">门扉已启 · 咕咕低语</div>
+    </div>
+
+    <div class="footer-note">⚡ 密令正确方可揭晓</div>
+</div>
+
+<script>
+    (function() {
+        // DOM 元素
+        const pwdInput = document.getElementById('pwdInput');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const revealBtn = document.getElementById('revealBtn');
+        const secretArea = document.getElementById('secretArea');
+        const secretCodeSpan = document.getElementById('secretCode');
+        const hintMsg = document.getElementById('hintMsg');
+        const statusDot = document.getElementById('statusDot');
+
+        // 核心状态
+        let isVerified = false;          // 密码是否验证通过 (XY)
+        let secretRevealed = false;      // 是否已经展示过密码 (防止重复触发)
+
+        // 预设密码 & 咕咕密码
+        const CORRECT_PASSWORD = 'XY';
+        const GUGU_CODE = '1234';
+
+        // ---- 辅助函数 ----
+        function updateUIForVerification(verified) {
+            if (verified) {
+                // 验证通过：启用获得咕咕密码按钮，点亮小圆点
+                revealBtn.disabled = false;
+                statusDot.className = 'status-dot active';
+                // 不自动弹出秘密，等待用户点击“获得咕咕密码”
+                // 但保留提示信息
+                hintMsg.textContent = '✅ 密令正确，点击「获得咕咕密码」查看';
+            } else {
+                // 验证失败 / 重置
+                revealBtn.disabled = true;
+                statusDot.className = 'status-dot';
+                // 如果秘密已经显示过？但重置密码时应当隐藏秘密（除非已经显示，但逻辑上重新验证失败要隐藏）
+                // 但是为了体验，如果之前已经显示了秘密，并且用户修改了密码导致验证失败，我们保持秘密可见？
+                // 更合理：一旦密码改变且未验证，隐藏秘密区域并重置揭示状态。
+                // 但这里简化：只要验证失败，如果秘密区域可见，我们隐藏它（因为不再符合安全逻辑）
+                if (secretArea.style.opacity === '1' || secretArea.style.opacity === '1') {
+                    // 但只有当秘密是因为验证通过而显示的时候才隐藏？如果用户手动？不会手动。
+                    // 若秘密已显示，但此时密码被改且未验证，视为不安全，隐藏秘密。
+                    hideSecret();
+                }
+                hintMsg.textContent = '❌ 密令错误，请重试';
+            }
+        }
+
+        // 显示秘密 (1234)
+        function showSecret() {
+            secretCodeSpan.textContent = GUGU_CODE;   // 固定1234
+            secretArea.style.opacity = '1';
+            secretArea.style.transition = 'opacity 0.3s ease';
+            hintMsg.textContent = '🎉 咕咕密码已显现 · 1234';
+            secretRevealed = true;
+        }
+
+        // 隐藏秘密区域
+        function hideSecret() {
+            secretArea.style.opacity = '0';
+            secretArea.style.transition = 'opacity 0.2s ease';
+            // 注意：不要清除 secretCode 内容，但视觉隐藏即可
+            // 重置揭示标记，以便再次点击可显示
+            secretRevealed = false;
+            // 但注意如果隐藏后再次验证通过，需要能够再次点击显示
+            // 同时如果验证通过但秘密隐藏，点击“获得咕咕密码”仍可显示
+            // 但为了避免歧义，隐藏时重置 secretRevealed = false
+        }
+
+        // 重置验证状态 (不清空输入框，但将验证置为false)
+        function resetVerification() {
+            isVerified = false;
+            updateUIForVerification(false);
+            // 如果秘密区域正显示，也隐藏（由updateUI处理）
+            // 但updateUI里调用hideSecret有条件，确保隐藏
+            if (secretArea.style.opacity === '1') {
+                hideSecret();
+            }
+            hintMsg.textContent = '🔄 请输入密令 XY';
+        }
+
+        // ---- 核心验证逻辑 ----
+        function performVerification() {
+            const rawValue = pwdInput.value;
+            // 精确匹配 "XY"，大小写敏感 (题目要求 XY，所以严格)
+            const passed = (rawValue === CORRECT_PASSWORD);
+
+            if (passed) {
+                isVerified = true;
+                updateUIForVerification(true);
+                // 如果秘密之前因为某些原因隐藏着，但验证通过后，不自动显示，等待点击按钮
+                // 但如果秘密已经显示且验证通过，保持不变；但若秘密隐藏，则保持隐藏。
+                // 但提示信息更新
+                hintMsg.textContent = '✅ 密令正确，点击「获得咕咕密码」查看';
+                // 如果秘密之前是显示的（例如验证通过后没点过，不可能显示；只有点过reveal才会显示）
+                // 如果已经显示秘密，那保持显示，且提示不变。
+                if (secretArea.style.opacity === '1') {
+                    // 已经显示秘密，提示改为已显示
+                    hintMsg.textContent = '🎉 咕咕密码已显现 · 1234';
+                }
+            } else {
+                // 验证失败
+                isVerified = false;
+                updateUIForVerification(false);
+                // 如果秘密正在显示，强制隐藏（因为密码不对应）
+                // updateUI 里面会调用 hideSecret()
+                // 但额外处理提示
+                if (rawValue === '') {
+                    hintMsg.textContent = '⏳ 请输入密令';
+                } else {
+                    hintMsg.textContent = '❌ 密令错误，请重试';
+                }
+            }
+        }
+
+        // ---- 事件绑定 ----
+
+        // 1. 验证按钮点击
+        verifyBtn.addEventListener('click', function() {
+            performVerification();
+        });
+
+        // 2. 输入框回车触发验证
+        pwdInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performVerification();
+            }
+        });
+
+        // 3. 输入框内容变化时 —— 如果用户修改密码，自动重置验证状态（更友好）
+        pwdInput.addEventListener('input', function() {
+            // 如果当前是已验证状态，但用户改了输入，立刻撤销验证状态
+            if (isVerified) {
+                // 但只撤销验证，不立即执行验证，让用户再点击或回车
+                isVerified = false;
+                revealBtn.disabled = true;
+                statusDot.className = 'status-dot';
+                // 如果秘密显示着，需要隐藏（因为验证状态丢失）
+                if (secretArea.style.opacity === '1') {
+                    hideSecret();
+                }
+                hintMsg.textContent = '✏️ 密令已更改，请重新验证';
+            } else {
+                // 未验证状态，如果输入为空或错误，维持提示
+                const val = pwdInput.value;
+                if (val === '') {
+                    hintMsg.textContent = '⏳ 请输入密令';
+                } else {
+                    // 但不要频繁提示错误，等用户主动验证
+                    hintMsg.textContent = '🔍 输入后点击「验证密令」';
+                }
+                // 保证状态灯灰色
+                statusDot.className = 'status-dot';
+                // 如果秘密显示着（理论上不会，但以防万一）
+                if (secretArea.style.opacity === '1') {
+                    hideSecret();
+                }
+            }
+        });
+
+        // 4. “获得咕咕密码”按钮点击 —— 只有在 isVerified = true 时才可用（按钮disabled受控）
+        revealBtn.addEventListener('click', function() {
+            // 二次确认是否已验证
+            if (!isVerified) {
+                // 按钮应该是disable状态，但以防万一
+                revealBtn.disabled = true;
+                hintMsg.textContent = '🔒 请先验证密令';
+                return;
+            }
+
+            // 如果秘密已经显示，可以再次显示（但内容不变），或者轻提示
+            if (secretArea.style.opacity === '1') {
+                // 已经显示了，可以闪烁一下或者再次强调
+                hintMsg.textContent = '🐣 咕咕密码就是 1234 呀！';
+                // 动画闪一下
+                secretCodeSpan.style.transform = 'scale(1.02)';
+                setTimeout(() => { secretCodeSpan.style.transform = 'scale(1)'; }, 200);
+                return;
+            }
+
+            // 未显示秘密 -> 展示秘密
+            showSecret();
+            // 确保按钮状态不变
+            revealBtn.disabled = false;
+        });
+
+        // ---- 初始化 ----
+        // 默认无验证，秘密隐藏
+        (function init() {
+            isVerified = false;
+            secretRevealed = false;
+            secretArea.style.opacity = '0';
+            revealBtn.disabled = true;
+            statusDot.className = 'status-dot';
+            pwdInput.value = '';   // 清空输入
+            hintMsg.textContent = '🔐 请输入密令 XY';
+            secretCodeSpan.textContent = GUGU_CODE;  // 预置内容，不可见
+        })();
+    })();
+</script>
+</body>
+</html>

@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>商品列表</title>
+    <title>清单</title>
+    <style>
+        *{
+            font-size: 50px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -11,42 +16,44 @@
 
             <li v-for="todo in todos" :key="todo.id">
                 {{ todo.text }} : [{{ todo.done ? "完成" : "未完成" }}]
+                <p v-if="loading">加载中。。。</p >
                 <button @click="toggle(todo.id)">切换</button>
             </li>
         </ul>
     </div>
 </body>
-<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script src="vue.js"></script>
 <script>
     new Vue({
         el: '#app',
         data: {
-            todos: []
+            todos: [],
+            loading:false
         },
         created() {
-            // 页面加载时读取本地存储
             const saved = localStorage.getItem('todos')
             if (saved) {
                 this.todos = JSON.parse(saved)
             } else {
-                // 如果没有保存过，就用默认值
                 this.todos = [
                     {id: 1, text: '上课', done: false},
                     {id: 2, text: '吃饭', done: false},
+                    {id: 3, text: '拿快递', done: false},
                 ]
             }
         },
         methods: {
             toggle(id) {
                 const todo = this.todos.find(e => e.id === id)
+                    this.loading = true
                 if (todo) {
                     todo.done = !todo.done
-                    // 每次修改后保存到 localStorage
                     this.save()
                 }
             },
             save() {
                 localStorage.setItem('todos', JSON.stringify(this.todos))
+                this.loading = false
             }
         }
     })

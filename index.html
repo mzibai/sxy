@@ -16,13 +16,12 @@
 
             <li v-for="todo in todos" :key="todo.id">
                 {{ todo.text }} : [{{ todo.done ? "完成" : "未完成" }}]
-                <p v-if="loading">加载中。。。</p >
                 <button @click="toggle(todo.id)">切换</button>
             </li>
         </ul>
     </div>
 </body>
-<script src="vue.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
 <script>
     new Vue({
         el: '#app',

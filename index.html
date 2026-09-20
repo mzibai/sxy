@@ -1,10 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>清单</title>
+
+    <!-- 尽量让微信别缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <style>
-        *{
+        * {
             font-size: 50px;
         }
     </style>
@@ -12,49 +18,64 @@
 <body>
     <div id="app">
         <ul>
-            <!-- 这里用 v-for 渲染商品 -->
-
             <li v-for="todo in todos" :key="todo.id">
                 {{ todo.text }} : [{{ todo.done ? "完成" : "未完成" }}]
                 <button @click="toggle(todo.id)">切换</button>
             </li>
         </ul>
     </div>
-</body>
-<script src="vue.js"></script>
-<script>
-    new Vue({
-        el: '#app',
-        data: {
-            todos: [],
-            loading:false
-        },
-        created() {
-            const saved = localStorage.getItem('todos')
-            if (saved) {
-                this.todos = JSON.parse(saved)
-            } else {
-                this.todos = [
-                    {id: 1, text: '上课', done: false},
-                    {id: 2, text: '吃饭', done: false},
-                    {id: 3, text: '拿快递', done: false},
-                ]
-            }
-        },
-        methods: {
-            toggle(id) {
-                const todo = this.todos.find(e => e.id === id)
-                    this.loading = true
-                if (todo) {
-                    todo.done = !todo.done
+
+    <script src="vue.js"></script>
+    <script>
+        /*
+         * 版本号：每次你改页面逻辑/结构，就 +1
+         * 比如 1 → 2 → 3
+         */
+        const PAGE_VERSION = '1'
+
+        const savedVersion = localStorage.getItem('page_version')
+
+        // 如果版本变了，说明你更新了页面
+        if (savedVersion !== PAGE_VERSION) {
+            // 清掉旧数据（可选，看你需求）
+            localStorage.removeItem('todos')
+            localStorage.setItem('page_version', PAGE_VERSION)
+
+            // 强刷一次，确保微信拿到新 HTML
+            location.reload(true)
+        }
+
+        new Vue({
+            el: '#app',
+            data: {
+                todos: []
+            },
+            created() {
+                const saved = localStorage.getItem('todos')
+                if (saved) {
+                    this.todos = JSON.parse(saved)
+                } else {
+                    this.todos = [
+                        { id: 1, text: '上课', done: false },
+                        { id: 2, text: '吃饭', done: false },
+                        { id: 3, text: '拿快递', done: false }
+                    ]
                     this.save()
                 }
             },
-            save() {
-                localStorage.setItem('todos', JSON.stringify(this.todos))
-                this.loading = false
+            methods: {
+                toggle(id) {
+                    const todo = this.todos.find(e => e.id === id)
+                    if (todo) {
+                        todo.done = !todo.done
+                        this.save()
+                    }
+                },
+                save() {
+                    localStorage.setItem('todos', JSON.stringify(this.todos))
+                }
             }
-        }
-    })
-</script>
+        })
+    </script>
+</body>
 </html>

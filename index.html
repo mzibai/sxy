@@ -1,34 +1,54 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>简单密码</title>
+    <title>商品列表</title>
 </head>
 <body>
-    <!-- 密码输入框 -->
-    <input id="pwdInput" type="password" placeholder="请输入秘钥">
-    <button onclick="checkPwd()">确认秘钥</button>
+    <div id="app">
+        <ul>
+            <!-- 这里用 v-for 渲染商品 -->
 
-    <!-- 初始隐藏的按钮 -->
-    <button id="secretBtn" style="display:none;" onclick="showCode()">获得咕咕密码</button>
-
-    <!-- 显示结果 -->
-    <p id="result"></p>
-
-    <script>
-        function checkPwd() {
-            var pwd = document.getElementById('pwdInput').value;
-            if (pwd === '天上的欣欣不说话') {
-                document.getElementById('secretBtn').style.display = 'inline-block';
-                document.getElementById('result').innerText = '秘钥正确！';
+            <li v-for="todo in todos" :key="todo.id">
+                {{ todo.text }} : [{{ todo.done ? "完成" : "未完成" }}]
+                <button @click="toggle(todo.id)">切换</button>
+            </li>
+        </ul>
+    </div>
+</body>
+<script src="vue.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            todos: []
+        },
+        created() {
+            // 页面加载时读取本地存储
+            const saved = localStorage.getItem('todos')
+            if (saved) {
+                this.todos = JSON.parse(saved)
             } else {
-                document.getElementById('result').innerText = '秘钥错误';
+                // 如果没有保存过，就用默认值
+                this.todos = [
+                    {id: 1, text: '上课', done: false},
+                    {id: 2, text: '吃饭', done: false},
+                ]
+            }
+        },
+        methods: {
+            toggle(id) {
+                const todo = this.todos.find(e => e.id === id)
+                if (todo) {
+                    todo.done = !todo.done
+                    // 每次修改后保存到 localStorage
+                    this.save()
+                }
+            },
+            save() {
+                localStorage.setItem('todos', JSON.stringify(this.todos))
             }
         }
-
-        function showCode() {
-            document.getElementById('result').innerText = '目前还未收录密码';
-        }
-    </script>
-</body>
+    })
+</script>
 </html>

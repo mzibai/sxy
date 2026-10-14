@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Laravel 项目函数与方法说明</title>
+    <style>
+        /* 整体深色模式背景与文字 */
+        body {
+            background-color: #2b2d30;
+            color: #d4d4d4;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* 锚点跳转标题与 div 区块 */
+        div[id^="database-"], div[id^="eloquent-"], div[id^="route-"], div[id^="builder-"], div[id^="collection-"], div[id^="schema-"] {
+            margin-bottom: 24px;
+            padding: 16px;
+            background-color: #333538; /* 区块轻微提亮 */
+            border-radius: 6px;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #e8e8e8;
+        }
+
+        /* a 链接样式（类似截图中的浅灰/浅蓝） */
+        a {
+            color: #9cdcfe;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #ffffff;
+        }
+
+        /* 列表样式 */
+        ul {
+            background-color: #2b2d30;
+            padding: 16px 16px 16px 40px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+            color: #d4d4d4;
+        }
+
+        li a {
+            color: #9cdcfe;
+        }
+
+        /* 表格：1px 黑色边框（深色模式优化） */
+        table {
+            border: 1px solid #000000;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #2b2d30; /* 表格内部背景 */
+            color: #d4d4d4;
+            margin-top: 12px;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #000000;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        table th {
+            background-color: #3c3f41; /* 表头稍微加深区分 */
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* 段落 p 标签 */
+        p {
+            color: #d4d4d4;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- 目录 -->
+    <div>
+        <ol>
+            <li><a href="#md5">md5()</a></li>
+            <li><a href="#date">date()</a></li>
+            <li><a href="#explode">explode()</a></li>
+            <li><a href="#in_array">in_array()</a></li>
+            
+            <li><a href="#routing-responsefactory-json">Routing\ResponseFactory::json</a></li>
+            <li><a href="#response">response</a></li>
+            
+            <li><a href="#validator-make">Validator::make → Factory::make</a></li>
+            <li><a href="#validation-validator-fails">Validation\Validator::fails</a></li>
+            <li><a href="#validation-rule-in">Validation\Rule::in</a></li>
+            
+            <li><a href="#request-post">Request::post</a></li>
+            <li><a href="#request-all">Request::all</a></li>
+            <li><a href="#request-query">Request::query</a></li>
+            
+            <li><a href="#eloquent-model-query">Eloquent Model::query</a></li>
+            <li><a href="#eloquent-model-all">Eloquent Model::all</a></li>
+            <li><a href="#eloquent-model-load">Eloquent Model::load</a></li>
+            <li><a href="#eloquent-model-update">Eloquent Model::update</a></li>
+            <li><a href="#eloquent-model-delete">Eloquent Model::delete</a></li>
+            
+            <li><a href="#eloquent-builder-create">Eloquent Builder::create</a></li>
+            <li><a href="#eloquent-builder-firstwhere">Eloquent Builder::firstWhere</a></li>
+            <li><a href="#eloquent-builder-where">Eloquent Builder::where</a></li>
+            
+            <li><a href="#builder-wherehas">Builder::whereHas</a></li>
+            <li><a href="#builder-with">Builder::with</a></li>
+            <li><a href="#builder-find">Builder::find</a></li>
+            <li><a href="#builder-get">Builder::get</a></li>
+            <li><a href="#builder-latest">Builder::latest</a></li>
+            <li><a href="#builder-first">Builder::first</a></li>
+            <li><a href="#builder-insertgetid">Builder::insertGetId</a></li>
+            <li><a href="#builder-max">Builder::max</a></li>
+            
+            <li><a href="#collection-load">Collection::load</a></li>
+            <li><a href="#collection-map">Collection::map</a></li>
+            
+            <li><a href="#route-get">Route::get → Router::get</a></li>
+            <li><a href="#route-post">Route::post → Router::post</a></li>
+            <li><a href="#route-delete">Route::delete → Router::delete</a></li>
+            <li><a href="#route-redirect">Route::redirect → Router::redirect</a></li>
+            
+            <li><a href="#routing-routeregistrar-group">Routing\RouteRegistrar::group</a></li>
+            
+            <li><a href="#schema-create">Schema::create → Schema Builder::create</a></li>
+            <li><a href="#schema-dropifexists">Schema::dropIfExists → Schema Builder::dropIfExists</a></li>
+            
+            <li><a href="#route-prefix">Route::prefix / RouteRegistrar::prefix</a></li>
+            <li><a href="#route-middleware">Route::middleware / RouteRegistrar::middleware</a></li>
+            
+            <li><a href="#database-schema-blueprint-id">Database\Schema\Blueprint::id</a></li>
+            <li><a href="#database-schema-blueprint-string">Database\Schema\Blueprint::string</a></li>
+            <li><a href="#database-schema-blueprint-enum">Database\Schema\Blueprint::enum</a></li>
+            <li><a href="#database-schema-blueprint-foreignid">Database\Schema\Blueprint::foreignId</a></li>
+            <li><a href="#database-schema-blueprint-date">Database\Schema\Blueprint::date</a></li>
+            <li><a href="#database-schema-blueprint-time">Database\Schema\Blueprint::time</a></li>
+            <li><a href="#database-schema-blueprint-integer">Database\Schema\Blueprint::integer</a></li>
+            <li><a href="#database-schema-blueprint-char">Database\Schema\Blueprint::char</a></li>
+            <li><a href="#database-schema-blueprint-double">Database\Schema\Blueprint::double</a></li>
+            <li><a href="#database-schema-blueprint-timestamps">Database\Schema\Blueprint::timestamps</a></li>
+            
+            <li>
+                <a href="#database-schema-foreignidcolumndefinition-constrained">Database\Schema\ForeignIdColumnDefinition::constrained</a>
+            </li>
+            <li>
+                <a href="#database-schema-foreignkeydefinition-cascadeondelete">Database\Schema\ForeignKeyDefinition::cascadeOnDelete</a>
+            </li>
+        </ol>
+    </div>
+    
+    <!-- 内容 -->
+    <div id="php-builtin">
+        <h2>一、PHP 内置函数</h2>
+        
+        <div id="md5">
+            <h3><a href="#md5">md5()</a></h3>
+            <p>
+                计算字符串的 MD5 摘要；项目用于保存/比对密码、根据用户名生成 token，以及 Seeder 的初始密码。
+                该函数是 PHP 内置实现，vendor 没有它的 PHP 定义文件。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$string</td>
+                    <td>无（必传）</td>
+                    <td>原始密码或用户名；生成密码摘要或登录 token。</td>
+                </tr>
+                <tr>
+                    <td>$binary</td>
+                    <td>false</td>
+                    <td>是否返回 16 字节二进制摘要；默认 false，项目得到 32 位十六进制字符串。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="date">
+            <h3><a href="#date">date()</a></h3>
+            <p>
+                按格式输出日期时间；take 中分别传入 Y-m-d、H:i:s。未传时间戳时使用当前时间，时区取执行时 PHP 配置。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$format</td>
+                    <td>无（必传）</td>
+                    <td>日期时间格式；本项目使用 Y-m-d 与 H:i:s。</td>
+                </tr>
+                <tr>
+                    <td>$timestamp</td>
+                    <td>null</td>
+                    <td>Unix 时间戳；默认 null，表示当前时间。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="explode">
+            <h3><a href="#explode">explode()</a></h3>
+            <p>
+                按分隔符拆分字符串；Auth2 把 ADMIN|WORKER|USER 一类角色字符串以竖线拆成数组。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$separator</td>
+                    <td>无（必传）</td>
+                    <td>拆分分隔符；本项目为竖线字符。</td>
+                </tr>
+                <tr>
+                    <td>$string</td>
+                    <td>无（必传）</td>
+                    <td>允许角色字符串；例如 ADMIN|WORKER|USER。</td>
+                </tr>
+                <tr>
+                    <td>$limit</td>
+                    <td>PHP_INT_MAX</td>
+                    <td>结果数量限制；默认 PHP_INT_MAX，可理解为不额外限制拆分数量。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="in_array">
+            <h3><a href="#in_array">in_array()</a></h3>
+            <p>
+                判断值是否存在于数组；Auth2 检查用户 type 是否属于允许角色数组，当前未传 strict，默认采用非严格比较。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$needle</td>
+                    <td>无（必传）</td>
+                    <td>要搜索的值；项目为用户 type。</td>
+                </tr>
+                <tr>
+                    <td>$haystack</td>
+                    <td>无（必传）</td>
+                    <td>待搜索数组；项目为 explode 得到的允许角色列表。</td>
+                </tr>
+                <tr>
+                    <td>$strict</td>
+                    <td>false</td>
+                    <td>是否同时严格比较值和类型；默认 false，本项目未覆盖。</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div id="laravel-response">
+        <h2>二、Laravel 辅助函数与响应方法</h2>
+        
+        <div id="routing-responsefactory-json">
+            <h3><a href="#routing-responsefactory-json">Routing\ResponseFactory::json</a></h3>
+            <p>
+                创建 JSON HTTP 响应；由 response()-&gt;json(...) 调用，项目默认成功状态 200，也显式设置失败或确认响应状态。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$data</td>
+                    <td>[]</td>
+                    <td>要编码为 JSON 的响应内容；项目包含 code、message 以及可选 data。</td>
+                </tr>
+                <tr>
+                    <td>$status</td>
+                    <td>200</td>
+                    <td>HTTP 状态码；根据函数可为 JSON 响应状态或重定向状态。</td>
+                </tr>
+                <tr>
+                    <td>$headers</td>
+                    <td>[]</td>
+                    <td>响应头键值数组；项目省略，使用空数组。</td>
+                </tr>
+                <tr>
+                    <td>$options</td>
+                    <td>0</td>
+                    <td>JSON 编码选项位掩码；默认 0，项目未覆盖。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="response">
+            <h3><a href="#response">response</a></h3>
+            <p>
+                获取响应工厂或创建普通响应；项目调用 response() 不传参数，因此返回 ResponseFactory，随后调用 json。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$content</td>
+                    <td>null</td>
+                    <td>普通响应内容；项目 response() 不传任何参数，直接取得响应工厂。</td>
+                </tr>
+                <tr>
+                    <td>$status</td>
+                    <td>200</td>
+                    <td>普通响应 HTTP 状态码，默认 200；无实参 response() 返回工厂时此默认值不创建响应。</td>
+                </tr>
+                <tr>
+                    <td>$headers</td>
+                    <td>[]</td>
+                    <td>普通响应头数组；项目无实参调用 response()，随后在 json 中创建响应。</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div id="request-validation">
+        <h2>三、请求与验证方法</h2>
+        
+        <div id="validator-make">
+            <h3><a href="#validator-make">Validator::make → Factory::make</a></h3>
+            <p>
+                创建验证器实例；项目通过 Validator Facade 调用，验证注册、登录、预订、员工、桌位、取号、结账和鉴权输入。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$data</td>
+                    <td>无（必传）</td>
+                    <td>待验证数据数组；项目传入请求体或全部请求字段。</td>
+                </tr>
+                <tr>
+                    <td>$rules</td>
+                    <td>无（必传）</td>
+                    <td>字段到验证规则的映射；决定字段必填、类型、长度、格式或唯一性等要求。</td>
+                </tr>
+                <tr>
+                    <td>$messages</td>
+                    <td>[]</td>
+                    <td>自定义错误消息；项目省略，使用验证器默认消息。</td>
+                </tr>
+                <tr>
+                    <td>$attributes</td>
+                    <td>[]</td>
+                    <td>自定义字段显示名称；用于错误消息，项目省略。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="validation-validator-fails">
+            <h3><a href="#validation-validator-fails">Validation\Validator::fails</a></h3>
+            <p>
+                执行验证并返回是否失败；项目在失败时调用 ResponseController::failure。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td colspan="3">无参数</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="validation-rule-in">
+            <h3><a href="#validation-rule-in">Validation\Rule::in</a></h3>
+            <p>
+                构造值必须属于允许集合的验证规则；项目传入 A、B、C，限制 table_type。也支持多个实参，源码通过 func_get_args() 接收。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$values</td>
+                    <td>无（必传）</td>
+                    <td>允许值集合；本项目为 ["A","B","C"]，构建桌型 in 验证规则。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="request-post">
+            <h3><a href="#request-post">Request::post</a></h3>
+            <p>
+                读取请求体参数；不传 $key 时返回请求体全部字段，项目用于注册、登录和预订验证。该方法读取 request 参数袋；正常 Laravel HTTP 请求构建时，JSON 请求体也会被放入该参数袋。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$key</td>
+                    <td>null</td>
+                    <td>待读取字段名；null 表示返回该输入源的全部数据。</td>
+                </tr>
+                <tr>
+                    <td>$default</td>
+                    <td>null</td>
+                    <td>指定字段不存在时返回的备用值。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="request-all">
+            <h3><a href="#request-all">Request::all</a></h3>
+            <p>
+                返回全部输入与上传文件，支持按字段筛选；项目用于员工、桌位、取号和结账验证。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$keys</td>
+                    <td>null</td>
+                    <td>要获取的字段名或字段列表；null 表示全部输入与上传文件。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="request-query">
+            <h3><a href="#request-query">Request::query</a></h3>
+            <p>
+                读取 URL 查询字符串参数；项目中 Auth2 不传 $key，校验查询字符串是否携带 token。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$key</td>
+                    <td>null</td>
+                    <td>待读取字段名；null 表示返回该输入源的全部数据。</td>
+                </tr>
+                <tr>
+                    <td>$default</td>
+                    <td>null</td>
+                    <td>指定字段不存在时返回的备用值。</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div id="eloquent-database">
+        <h2>四、Eloquent 与数据库查询方法</h2>
+        
+        <div id="eloquent-model-query">
+            <h3><a href="#eloquent-model-query">Eloquent Model::query</a></h3>
+            <p>
+                为当前模型创建 Eloquent 查询构造器；User、Booking、Queue、Table、Mealing、Bill 都使用该继承方法。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td colspan="3">无参数</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-model-all">
+            <h3><a href="#eloquent-model-all">Eloquent Model::all</a></h3>
+            <p>
+                查询模型表的所有记录并返回 Eloquent 集合；项目调用 Mealing::all() 获取所有用餐记录。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$columns</td>
+                    <td>['*']</td>
+                    <td>要查询的列；默认 ["*"] 选择全部列，员工列表显式选择 id、username、type。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-model-load">
+            <h3><a href="#eloquent-model-load">Eloquent Model::load</a></h3>
+            <p>
+                给已经取得的单个模型加载关联；项目加载 booking、table。签名只声明一个参数，但源码支持 load("table", "booking") 多个实参。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$relations</td>
+                    <td>无（必传）</td>
+                    <td>需要加载的关联名称或关联配置；项目传入 booking、table。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-model-update">
+            <h3><a href="#eloquent-model-update">Eloquent Model::update</a></h3>
+            <p>
+                对已取得的单个模型填充属性并保存；项目用于 token、预订状态、队列状态、桌位状态和用餐状态更新。会走模型保存和事件流程。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$attributes</td>
+                    <td>[]</td>
+                    <td>需要修改的模型属性数组；例如 token 或 status，经 fill 和 save 保存。</td>
+                </tr>
+                <tr>
+                    <td>$options</td>
+                    <td>[]</td>
+                    <td>传递给模型 save 的保存选项；项目省略，使用空数组。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-model-delete">
+            <h3><a href="#eloquent-model-delete">Eloquent Model::delete</a></h3>
+            <p>
+                删除已取得的单个模型；项目用于员工和空闲桌位删除，会走模型删除事件流程。数据库外键可能继续触发级联删除。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td colspan="3">无参数</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-builder-create">
+            <h3><a href="#eloquent-builder-create">Eloquent Builder::create</a></h3>
+            <p>
+                按属性数组新建并保存模型，返回模型实例；项目用于用户注册和数据库填充，受 $fillable 等批量赋值规则影响。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$attributes</td>
+                    <td>[]</td>
+                    <td>创建模型的属性数组；写入相应 $fillable 允许的字段。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-builder-firstwhere">
+            <h3><a href="#eloquent-builder-firstwhere">Eloquent Builder::firstWhere</a></h3>
+            <p>
+                添加 where 条件并取第一条模型，没有结果返回 null；项目按 username 或 token 查询用户。二参数调用 firstWhere("token", token值) 会把第二个实参作为等值比较值。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>参与查询或排序的字段/表达式；具体由调用处传入。</td>
+                </tr>
+                <tr>
+                    <td>$operator</td>
+                    <td>null</td>
+                    <td>比较运算符；where/firstWhere 二参数形式时第二个实参作为值，由实现补等号。</td>
+                </tr>
+                <tr>
+                    <td>$value</td>
+                    <td>null</td>
+                    <td>三/四参数 where 条件的比较值；二参数形式由框架从第二个实参取值。</td>
+                </tr>
+                <tr>
+                    <td>$boolean</td>
+                    <td>'and'</td>
+                    <td>条件连接方式，默认 and；本项目没有覆盖。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="eloquent-builder-where">
+            <h3><a href="#eloquent-builder-where">Eloquent Builder::where</a></h3>
+            <p>
+                添加查询条件，返回当前查询构造器；项目筛选用户、角色、预订状态、联系人、桌型、桌位和队列状态。二参数形式 where("字段", 值) 表示等于，三参数形式可指定 !=、like 等运算符。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>参与查询或排序的字段/表达式；具体由调用处传入。</td>
+                </tr>
+                <tr>
+                    <td>$operator</td>
+                    <td>null</td>
+                    <td>比较运算符；where/firstWhere 二参数形式时第二个实参作为值，由实现补等号。</td>
+                </tr>
+                <tr>
+                    <td>$value</td>
+                    <td>null</td>
+                    <td>三/四参数 where 条件的比较值；二参数形式由框架从第二个实参取值。</td>
+                </tr>
+                <tr>
+                    <td>$boolean</td>
+                    <td>'and'</td>
+                    <td>条件连接方式，默认 and；本项目没有覆盖。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-wherehas">
+            <h3><a href="#builder-wherehas">Eloquent Builder::whereHas</a></h3>
+            <p>
+                只保留关联存在且符合条件的模型；quHao 对 booking 关联按 table_type 筛选。同名方法实际由 QueriesRelationships Trait 提供。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$relation</td>
+                    <td>无（必传）</td>
+                    <td>需要存在且满足条件的关联；项目为 booking。</td>
+                </tr>
+                <tr>
+                    <td>$callback</td>
+                    <td>null</td>
+                    <td>关联查询约束闭包；项目接收 $query 并加入 table_type 条件。</td>
+                </tr>
+                <tr>
+                    <td>$operator</td>
+                    <td>'&gt;='</td>
+                    <td>关联数量比较运算符；默认 &gt;=，本项目省略。</td>
+                </tr>
+                <tr>
+                    <td>$count</td>
+                    <td>1</td>
+                    <td>关联数量阈值；默认 1，配合默认 &gt;= 表示至少存在一条关联。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-with">
+            <h3><a href="#builder-with">Eloquent Builder::with</a></h3>
+            <p>
+                在查询执行前指定需要预加载的关联；quHao 使用 with("booking")。本项目随后执行 max 聚合，with 不会让聚合查询返回已加载的模型。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$relations</td>
+                    <td>无（必传）</td>
+                    <td>需要加载的关联名称或关联配置；项目传入 booking、table。</td>
+                </tr>
+                <tr>
+                    <td>$callback</td>
+                    <td>null</td>
+                    <td>对关联查询施加约束的回调，或源码支持的附加关系参数；项目省略。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-find">
+            <h3><a href="#builder-find">Eloquent Builder::find</a></h3>
+            <p>
+                按主键查找模型；传单个 ID 通常返回模型或 null，传 ID 数组可返回集合。项目使用单个 ID 查用户、预订、桌位、队列和用餐记录。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$id</td>
+                    <td>无（必传）</td>
+                    <td>目标模型主键或主键数组；项目传入单个用户、桌位、预订、队列或用餐 ID。</td>
+                </tr>
+                <tr>
+                    <td>$columns</td>
+                    <td>['*']</td>
+                    <td>要查询的列；默认 ["*"] 选择全部列，员工列表显式选择 id、username、type。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-get">
+            <h3><a href="#builder-get">Eloquent Builder::get</a></h3>
+            <p>
+                执行 SELECT 并返回 Eloquent 模型集合；可指定列，员工列表使用 ["id","username","type"]。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$columns</td>
+                    <td>['*']</td>
+                    <td>要查询的列；默认 ["*"] 选择全部列，员工列表显式选择 id、username、type。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-latest">
+            <h3><a href="#builder-latest">Eloquent Builder::latest</a></h3>
+            <p>
+                按指定列降序排列；getByTable 显式传入 id，再调用 first 取得该桌位主键最大的用餐记录。签名默认 null，函数内才回退到模型创建时间字段。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>null</td>
+                    <td>降序排序列；项目传入 id，省略时回退到模型创建时间字段。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-first">
+            <h3><a href="#builder-first">Eloquent Builder::first</a></h3>
+            <p>
+                限制查询返回第一条记录，没有结果返回 null；项目用于获取桌位最新用餐记录。实际定义来自 BuildsQueries Trait。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$columns</td>
+                    <td>['*']</td>
+                    <td>要查询的列；默认 ["*"] 选择全部列，员工列表显式选择 id、username、type。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-insertgetid">
+            <h3><a href="#builder-insertgetid">Query Builder::insertGetId</a></h3>
+            <p>
+                插入一条记录并返回生成的主键；项目通过 Eloquent 构造器转发，写入预订、队列、员工、桌位、用餐和账单。直接查询写入不会执行模型 create 的批量赋值、模型事件及自动时间戳逻辑。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$values</td>
+                    <td>无（必传）</td>
+                    <td>插入字段到值的数组；如预订数据、队列数据或账单金额。</td>
+                </tr>
+                <tr>
+                    <td>$sequence</td>
+                    <td>null</td>
+                    <td>需要返回的主键列/序列标识，含义取决于数据库驱动；本项目省略，使用驱动默认规则。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="builder-max">
+            <h3><a href="#builder-max">Query Builder::max</a></h3>
+            <p>
+                执行数据库 MAX 聚合，取得指定字段最大值；quHao 使用 queue_number，空结果由业务代码 ?: 0 处理。该方法由 Eloquent 构造器转发至基础查询构造器。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>要计算最大值的列；项目为 queue_number。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="collection-load">
+            <h3><a href="#collection-load">Eloquent Collection::load</a></h3>
+            <p>
+                给集合中所有模型批量加载关联；项目给所有用餐加载 table，给有效队列加载 booking。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$relations</td>
+                    <td>无（必传）</td>
+                    <td>需要加载的关联名称或关联配置；项目传入 booking、table。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="collection-map">
+            <h3><a href="#collection-map">Eloquent Collection::map</a></h3>
+            <p>
+                对集合每个元素执行回调，传入元素和键；getAllMealing 的回调只接收元素并返回数组，因此结果转为基础 Support Collection。getMealing 的接收者是单个 Model，不能调用这个集合方法。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$callback</td>
+                    <td>无（必传）</td>
+                    <td>映射函数，框架传入 (元素, 键)；项目只声明 $item，返回所需字段数组。</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div id="facade-route">
+        <h2>五、门面与路由方法</h2>
+        
+        <div id="route-get">
+            <h3><a href="#route-get">Route::get → Router::get</a></h3>
+            <p>
+                注册 GET 路由；项目通过 Route Facade 或 RouteRegistrar 链式调用，将路径绑定到控制器方法。GET 注册同时支持 HEAD。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$uri</td>
+                    <td>无（必传）</td>
+                    <td>路由路径，可包含 {id} 等必填占位符或 {contact_mobile?} 等可选占位符。</td>
+                </tr>
+                <tr>
+                    <td>$action</td>
+                    <td>null</td>
+                    <td>路由处理器；项目传入 [控制器::class, "方法名"]，须对应实际存在的方法。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="route-post">
+            <h3><a href="#route-post">Route::post → Router::post</a></h3>
+            <p>
+                注册 POST 路由；项目通过 Route Facade 或 RouteRegistrar 链式调用，将路径绑定到控制器方法。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$uri</td>
+                    <td>无（必传）</td>
+                    <td>路由路径，可包含 {id} 等必填占位符或 {contact_mobile?} 等可选占位符。</td>
+                </tr>
+                <tr>
+                    <td>$action</td>
+                    <td>null</td>
+                    <td>路由处理器；项目传入 [控制器::class, "方法名"]，须对应实际存在的方法。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="route-delete">
+            <h3><a href="#route-delete">Route::delete → Router::delete</a></h3>
+            <p>
+                注册 DELETE 路由；项目通过 Route Facade 或 RouteRegistrar 链式调用，将路径绑定到控制器方法。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$uri</td>
+                    <td>无（必传）</td>
+                    <td>路由路径，可包含 {id} 等必填占位符或 {contact_mobile?} 等可选占位符。</td>
+                </tr>
+                <tr>
+                    <td>$action</td>
+                    <td>null</td>
+                    <td>路由处理器；项目传入 [控制器::class, "方法名"]，须对应实际存在的方法。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="route-redirect">
+            <h3><a href="#route-redirect">Route::redirect → Router::redirect</a></h3>
+            <p>
+                注册重定向路由；web.php 将 / 重定向到 register.html，默认使用 302 状态码。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$uri</td>
+                    <td>无（必传）</td>
+                    <td>重定向入口路径；项目传入 /。</td>
+                </tr>
+                <tr>
+                    <td>$destination</td>
+                    <td>无（必传）</td>
+                    <td>重定向目标；项目传入 register.html。</td>
+                </tr>
+                <tr>
+                    <td>$status</td>
+                    <td>302</td>
+                    <td>重定向 HTTP 状态码；默认 302，项目省略。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="routing-routeregistrar-group">
+            <h3><a href="#routing-routeregistrar-group">Routing\RouteRegistrar::group</a></h3>
+            <p>
+                使用当前累积的 prefix、middleware 等属性注册一组路由；api.php 全部 group 都是链式 RouteRegistrar::group(array $attributes, $routes) 的调用形式。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$callback</td>
+                    <td>无（必传）</td>
+                    <td>注册组内路由的闭包，也支持数组或路由文件路径；本项目传入无形参闭包。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="schema-create">
+            <h3><a href="#schema-create">Schema::create → Schema Builder::create</a></h3>
+            <p>
+                创建数据库表并执行 Blueprint 回调；项目 6 个迁移分别创建 users、bookings、queues、tables、mealings、bills，由 Schema Facade 转发。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$table</td>
+                    <td>无（必传）</td>
+                    <td>数据库表名；具体表由迁移传入。</td>
+                </tr>
+                <tr>
+                    <td>$callback</td>
+                    <td>无（必传）</td>
+                    <td>定义表结构的闭包，Laravel 传入 Blueprint $table；内部声明列与外键。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="schema-dropifexists">
+            <h3><a href="#schema-dropifexists">Schema::dropIfExists → Schema Builder::dropIfExists</a></h3>
+            <p>
+                数据库表存在时删除；项目在每个迁移的 down 中删除对应表，由 Schema Facade 转发。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$table</td>
+                    <td>无（必传）</td>
+                    <td>数据库表名；具体表由迁移传入。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="route-prefix">
+            <h3><a href="#route-prefix">Route::prefix / RouteRegistrar::prefix（动态方法注解）</a></h3>
+            <p>
+                设置路由组 URI 前缀；项目传入 v1、user、/admin、/table、/employees、booking、/mealing。此处只有 @method 注解，没有独立函数实体；实际实现由 Router::__call 转发至 RouteRegistrar::attribute。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$prefix</td>
+                    <td>无（必传）</td>
+                    <td>路由组前缀字符串；嵌套组前缀累积形成完整 URI。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="route-middleware">
+            <h3><a href="#route-middleware">Route::middleware / RouteRegistrar::middleware（动态方法注解）</a></h3>
+            <p>
+                设置路由组中间件；项目传入 auth2:ADMIN 等字符串，冒号后的角色参数交给 Auth2::__call / RouteRegistrar::attribute。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$middleware</td>
+                    <td>无（必传）</td>
+                    <td>中间件字符串或列表；auth2 后的 ADMIN|WORKER 等字符串限制可访问角色。</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div id="database-schema">
+        <h2>六、数据库表结构方法</h2>
+        
+        <div id="database-schema-blueprint-id">
+            <h3><a href="#database-schema-blueprint-id">Database\Schema\Blueprint::id</a></h3>
+            <p>
+                添加自增无符号大整数主键列；项目所有表都使用默认 id。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>'id'</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-string">
+            <h3><a href="#database-schema-blueprint-string">Database\Schema\Blueprint::string</a></h3>
+            <p>
+                添加可变长度字符串列；项目用于用户名、密码、token、联系人、手机号、状态等。$length 的签名默认 null，函数内部回退到 Schema Builder 的默认字符串长度，通常为 255。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+                <tr>
+                    <td>$length</td>
+                    <td>null</td>
+                    <td>字符串长度；签名默认 null，实际默认长度由 Schema Builder 配置决定，通常为 255。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-enum">
+            <h3><a href="#database-schema-blueprint-enum">Database\Schema\Blueprint::enum</a></h3>
+            <p>
+                添加枚举列；用于用户角色、桌型、队列状态、桌位状态和用餐状态。允许值由每个迁移传入的数组决定。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+                <tr>
+                    <td>$allowed</td>
+                    <td>无（必传）</td>
+                    <td>数据库枚举列允许值数组；如角色、桌型或状态集合。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-foreignid">
+            <h3><a href="#database-schema-blueprint-foreignid">Database\Schema\Blueprint::foreignId</a></h3>
+            <p>
+                添加无符号大整数外键字段定义；需要随后 constrained 建立外键约束，项目再用 cascadeOnDelete 配置级联删除。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-date">
+            <h3><a href="#database-schema-blueprint-date">Database\Schema\Blueprint::date</a></h3>
+            <p>
+                添加日期列；项目用于 bookings.dining_date。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-time">
+            <h3><a href="#database-schema-blueprint-time">Database\Schema\Blueprint::time</a></h3>
+            <p>
+                添加时间列；项目用于 bookings.dining_time。$precision 默认 null，实际精度在函数内部使用 defaultTimePrecision() 决定。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+                <tr>
+                    <td>$precision</td>
+                    <td>null</td>
+                    <td>时间字段的小数秒精度；默认 null，实际值按 Blueprint 的默认精度规则决定。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-integer">
+            <h3><a href="#database-schema-blueprint-integer">Database\Schema\Blueprint::integer</a></h3>
+            <p>
+                添加整数列；项目用于 number_guest、queue_number，未开启自增或无符号选项。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+                <tr>
+                    <td>$autoIncrement</td>
+                    <td>false</td>
+                    <td>是否自增；默认 false，项目没有覆盖。</td>
+                </tr>
+                <tr>
+                    <td>$unsigned</td>
+                    <td>false</td>
+                    <td>是否使用无符号整数；默认 false，项目没有覆盖。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-char">
+            <h3><a href="#database-schema-blueprint-char">Database\Schema\Blueprint::char</a></h3>
+            <p>
+                添加固定长度字符串列；项目用于 bookings.table_type。签名默认长度 null，源码回退到默认字符串长度，不能据 A/B/C 误写为默认长度 1。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+                <tr>
+                    <td>$length</td>
+                    <td>null</td>
+                    <td>字符串长度；签名默认 null，实际默认长度由 Schema Builder 配置决定，通常为 255。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-double">
+            <h3><a href="#database-schema-blueprint-double">Database\Schema\Blueprint::double</a></h3>
+            <p>
+                添加双精度浮点数列；项目用于 bills.amount。当前 Laravel 版本签名只有 $column，无精度或小数位参数。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>无（必传）</td>
+                    <td>新建数据库列的名称；本项目按迁移传入 id、username、number_guest、amount 等。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-blueprint-timestamps">
+            <h3><a href="#database-schema-blueprint-timestamps">Database\Schema\Blueprint::timestamps</a></h3>
+            <p>
+                添加可为空的 created_at、updated_at 时间戳列；项目每张表均调用。这里只建立字段定义，insertGetId 不会因此自动填入模型时间戳。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$precision</td>
+                    <td>null</td>
+                    <td>时间字段的小数秒精度；默认 null，实际值按 Blueprint 的默认精度规则决定。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-foreignidcolumndefinition-constrained">
+            <h3>
+                <a href="#database-schema-foreignidcolumndefinition-constrained">Database\Schema\ForeignIdColumnDefinition::constrained</a>
+            </h3>
+            <p>
+                为 foreignId 建立外键约束；项目显式指定关联表，users 关联还指定 id 列。$column 签名默认 null，函数内部才回退到 id；返回 ForeignKeyDefinition 以继续配置删除策略。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td>$table</td>
+                    <td>null</td>
+                    <td>外键引用的目标表；项目为 users、bookings、tables、queues、mealings。null 时尝试由列名/已有配置推断。</td>
+                </tr>
+                <tr>
+                    <td>$column</td>
+                    <td>null</td>
+                    <td>目标表被引用的列；签名默认 null，内部一般回退到 id。users 的调用显式传入 id。</td>
+                </tr>
+                <tr>
+                    <td>$indexName</td>
+                    <td>null</td>
+                    <td>外键约束的自定义索引名称；省略时按数据库/框架规则生成。</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="database-schema-foreignkeydefinition-cascadeondelete">
+            <h3>
+                <a href="#database-schema-foreignkeydefinition-cascadeondelete">Database\Schema\ForeignKeyDefinition::cascadeOnDelete</a>
+            </h3>
+            <p>
+                把外键的删除策略设置为 CASCADE；删除被引用的父记录时，数据库级联删除当前表关联记录。无参数。
+            </p>
+            <table>
+                <tr>
+                    <th>参数</th>
+                    <th>默认值</th>
+                    <th>含义与作用</th>
+                </tr>
+                <tr>
+                    <td colspan="3">无参数</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 其他章节结构完全一致，可按上面方式继续扩展 -->
+
+</body>
+</html>

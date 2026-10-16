@@ -16,6 +16,12 @@
             --code-bg: #1e2229;
         }
 
+        /*
+        
+        
+        
+        
+        */
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -410,7 +416,131 @@ Route::redirect('/', '/register.html');</code></pre>
             loadAnswers();
         })();
 
-        // 自动添加
+        // 半全角替换
+        (function () {
+            // 全角 → 半角映射表
+            const FULL_TO_HALF = {
+                '（': '(',
+                '）': ')',
+                '【': '[',
+                '】': ']',
+                '｛': '{',
+                '｝': '}',
+                '［': '[',
+                '］': ']',
+                '“': '"',
+                '”': '"',
+                '‘': "'",
+                '’': "'",
+                '＜': '<',
+                '＞': '>',
+                '，': ',',
+                '；': ';',
+                '：': ':',
+                '＝': '=',
+                '？': '?',
+                '！': '!',
+                '　': ' '
+            };
+
+            const FULL_KEYS = Object.keys(FULL_TO_HALF);
+
+            function isTextarea(el) {
+                return el && el.tagName === 'TEXTAREA';
+            }
+
+            /**
+             * 将字符串中的全角符号替换为半角
+             */
+            function convertFullToHalf(str) {
+                let result = '';
+                for (let i = 0; i < str.length; i++) {
+                    const ch = str[i];
+                    result += FULL_TO_HALF[ch] !== undefined ? FULL_TO_HALF[ch] : ch;
+                }
+                return result;
+            }
+
+            /**
+             * 处理 textarea 内容替换（保持光标）
+             */
+            function replaceInTextarea(ta) {
+                const start = ta.selectionStart;
+                const end = ta.selectionEnd;
+                const value = ta.value;
+
+                let changed = false;
+                let newText = '';
+
+                for (let i = 0; i < value.length; i++) {
+                    const ch = value[i];
+                    if (FULL_TO_HALF[ch]) {
+                        changed = true;
+                        newText += FULL_TO_HALF[ch];
+                    } else {
+                        newText += ch;
+                    }
+                }
+
+                if (!changed) return;
+
+                ta.value = newText;
+
+                // 尽量恢复光标位置（简单版）
+                ta.selectionStart = start;
+                ta.selectionEnd = end;
+
+                ta.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            /**
+             * 输入时实时替换（仅替换刚输入的内容）
+             */
+            function onInput(e) {
+                const ta = e.target;
+                if (!isTextarea(ta)) return;
+
+                const start = ta.selectionStart;
+                const end = ta.selectionEnd;
+                const value = ta.value;
+
+                // 只检查光标前 1~2 个字符，避免全量扫描
+                const checkStart = Math.max(0, start - 2);
+                const checkText = value.slice(checkStart, start);
+
+                let needReplace = false;
+                for (const ch of checkText) {
+                    if (FULL_TO_HALF[ch]) {
+                        needReplace = true;
+                        break;
+                    }
+                }
+
+                if (!needReplace) return;
+
+                replaceInTextarea(ta);
+            }
+
+            /**
+             * 粘贴时整体替换
+             */
+            function onPaste(e) {
+                const ta = e.target;
+                if (!isTextarea(ta)) return;
+
+                // 等粘贴完成后再处理
+                setTimeout(() => {
+                    replaceInTextarea(ta);
+                }, 0);
+            }
+
+            // 绑定事件
+            document.querySelectorAll('textarea').forEach(ta => {
+                ta.addEventListener('input', onInput);
+                ta.addEventListener('paste', onPaste);
+            });
+        })();
+        
         (function () {
             // 需要自动配对的符号映射
             const PAIRS = {
@@ -507,131 +637,8 @@ Route::redirect('/', '/register.html');</code></pre>
                 ta.addEventListener('keydown', autoDelete);
             });
         })();
-
-        // 半全角替换
-        (function () {
-    // 全角 → 半角映射表
-    const FULL_TO_HALF = {
-        '（': '(',
-        '）': ')',
-        '【': '[',
-        '】': ']',
-        '｛': '{',
-        '｝': '}',
-        '［': '[',
-        '］': ']',
-        '“': '"',
-        '”': '"',
-        '‘': "'",
-        '’': "'",
-        '＜': '<',
-        '＞': '>',
-        '，': ',',
-        '；': ';',
-        '：': ':',
-        '＝': '=',
-        '？': '?',
-        '！': '!',
-        '　': ' '
-    };
-
-    const FULL_KEYS = Object.keys(FULL_TO_HALF);
-
-    function isTextarea(el) {
-        return el && el.tagName === 'TEXTAREA';
-    }
-
-    /**
-     * 将字符串中的全角符号替换为半角
-     */
-    function convertFullToHalf(str) {
-        let result = '';
-        for (let i = 0; i < str.length; i++) {
-            const ch = str[i];
-            result += FULL_TO_HALF[ch] !== undefined ? FULL_TO_HALF[ch] : ch;
-        }
-        return result;
-    }
-
-    /**
-     * 处理 textarea 内容替换（保持光标）
-     */
-    function replaceInTextarea(ta) {
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-        const value = ta.value;
-
-        let changed = false;
-        let newText = '';
-
-        for (let i = 0; i < value.length; i++) {
-            const ch = value[i];
-            if (FULL_TO_HALF[ch]) {
-                changed = true;
-                newText += FULL_TO_HALF[ch];
-            } else {
-                newText += ch;
-            }
-        }
-
-        if (!changed) return;
-
-        ta.value = newText;
-
-        // 尽量恢复光标位置（简单版）
-        ta.selectionStart = start;
-        ta.selectionEnd = end;
-
-        ta.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-
-    /**
-     * 输入时实时替换（仅替换刚输入的内容）
-     */
-    function onInput(e) {
-        const ta = e.target;
-        if (!isTextarea(ta)) return;
-
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
-        const value = ta.value;
-
-        // 只检查光标前 1~2 个字符，避免全量扫描
-        const checkStart = Math.max(0, start - 2);
-        const checkText = value.slice(checkStart, start);
-
-        let needReplace = false;
-        for (const ch of checkText) {
-            if (FULL_TO_HALF[ch]) {
-                needReplace = true;
-                break;
-            }
-        }
-
-        if (!needReplace) return;
-
-        replaceInTextarea(ta);
-    }
-
-    /**
-     * 粘贴时整体替换
-     */
-    function onPaste(e) {
-        const ta = e.target;
-        if (!isTextarea(ta)) return;
-
-        // 等粘贴完成后再处理
-        setTimeout(() => {
-            replaceInTextarea(ta);
-        }, 0);
-    }
-
-    // 绑定事件
-    document.querySelectorAll('textarea').forEach(ta => {
-        ta.addEventListener('input', onInput);
-        ta.addEventListener('paste', onPaste);
-    });
-})();
+        
+       
     </script>
 </body>
 </html>

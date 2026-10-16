@@ -409,6 +409,104 @@ Route::redirect('/', '/register.html');</code></pre>
 
             loadAnswers();
         })();
+
+        // 自动添加
+        (function () {
+            // 需要自动配对的符号映射
+            const PAIRS = {
+                '(': ')',
+                '[': ']',
+                '{': '}',
+                '"': '"',
+                "'": "'",
+                '`': '`'
+            };
+            // 反向配对（用于遇到右括号时跳过而非插入新符号的处理可选）
+            const CLOSERS = new Set(Object.values(PAIRS));
+
+            function isTextarea(el) {
+                return el && el.tagName === 'TEXTAREA';
+            }
+
+            function autoPair(e) {
+                const ta = e.target;
+                if (!isTextarea(ta)) return;
+
+                // 只处理单字符按键
+                const ch = e.key;
+                if (!(ch in PAIRS)) return;
+
+                // 用户选中了一段文本时：包裹选区
+                const start = ta.selectionStart;
+                const end = ta.selectionEnd;
+                const value = ta.value;
+                const selected = value.slice(start, end);
+
+                // 成对符号
+                const open = ch;
+                const close = PAIRS[ch];
+
+                // 如果光标右边已经是相同闭合符，且未选中文本 → 直接跳过去（像 IDE）
+                if (selected === '' && value[start] === close) {
+                    e.preventDefault();
+                    ta.selectionStart = ta.selectionEnd = start + 1;
+                    return;
+                }
+
+                e.preventDefault();
+                const before = value.slice(0, start);
+                const after = value.slice(end);
+                const inserted = open + selected + close;
+                ta.value = before + inserted + after;
+
+                // 光标落在选中内容之后、闭合符之前
+                const caret = before.length + open.length + selected.length;
+                ta.selectionStart = ta.selectionEnd = caret;
+
+                // 触发 input 事件以便现有 saveAnswers 存储
+                ta.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            // 处理 Backspace：若删除的是左符号且紧跟对应右符号，则一起删
+            function autoDelete(e) {
+                const ta = e.target;
+                if (!isTextarea(ta) || e.key !== 'Backspace') return;
+                const start = ta.selectionStart;
+                const end = ta.selectionEnd;
+                if (start !== end) return;            // 有选区不处理
+                if (start === 0) return;
+                const value = ta.value;
+                const prev = value[start - 1];
+                const next = value[start];
+                if (prev in PAIRS && PAIRS[prev] === next) {
+                    e.preventDefault();
+                    ta.value = value.slice(0, start - 1) + value.slice(start + 1);
+                    ta.selectionStart = ta.selectionEnd = start - 1;
+                    ta.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            }
+
+            // 处理闭合符号输入：若已存在对应右符号在光标右侧，直接跳过
+            function skipClose(e) {
+                const ta = e.target;
+                if (!isTextarea(ta)) return;
+                const ch = e.key;
+                if (!CLOSERS.has(ch)) return;
+                const start = ta.selectionStart;
+                const end = ta.selectionEnd;
+                if (start !== end) return;
+                if (ta.value[start] === ch) {
+                    e.preventDefault();
+                    ta.selectionStart = ta.selectionEnd = start + 1;
+                }
+            }
+
+            document.querySelectorAll('textarea').forEach(ta => {
+                ta.addEventListener('keydown', autoPair);
+                ta.addEventListener('keydown', skipClose);
+                ta.addEventListener('keydown', autoDelete);
+            });
+        })();
     </script>
 </body>
 </html>

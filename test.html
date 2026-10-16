@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel 函数与参数练习题</title>
+    <style>
+        :root {
+            --bg-color: #2d3139;
+            --card-bg: #343842;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-white: #f8fafc;
+            --border-color: #4a5568;
+            --textarea-bg: #25282f;
+            --code-bg: #1e2229;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--accent-white);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            padding-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background-color: var(--card-bg);
+            color: var(--accent-white);
+        }
+
+        .question {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .question h3 {
+            margin-top: 0;
+            color: var(--accent-white);
+            font-size: 1.25rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            background-color: var(--textarea-bg);
+            color: var(--accent-white);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #718096;
+        }
+
+        .section-title {
+            color: var(--accent-white);
+            margin-top: 40px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Laravel 函数与参数练习题</h1>
+        <div class="subtitle">
+            依据当前《函数参考》编写，考查 PHP 内置函数、Laravel 辅助函数、门面及框架方法。共 16 题，满分 56 分，建议用时 60–90 分钟。
+        </div>
+        
+        <table>
+            <tr>
+                <th>题型</th>
+                <th>题号</th>
+                <th>每题分值</th>
+                <th>小计</th>
+            </tr>
+            <tr>
+                <td>参数基础</td>
+                <td>1–8</td>
+                <td>3</td>
+                <td>24</td>
+            </tr>
+            <tr>
+                <td>代码阅读与纠错</td>
+                <td>9–16</td>
+                <td>4</td>
+                <td>32</td>
+            </tr>
+        </table>
+        
+        <div class="section-title">一、参数基础（第 1–8 题，共 24 分）</div>
+        
+        <div class="question">
+            <h3>第 1 题：md5 的作用与使用场景（3 分）</h3>
+            <p>1. md5 的作用是什么？（1.5 分）<br>2. 请举一个 md5 的使用场景，并说明用途。（1.5 分）</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 2 题：日期格式与默认时间戳（3 分）</h3>
+            <pre><code>$a = date('Y-m-d', 0);
+$b = date('H:i:s', 0);
+$c = date('Y-m-d');</code></pre>
+            <p>写出 $a、$b 的值；解释 date 函数第 1、2 个参数的作用；说明 $c 使用哪个时间戳。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 3 题：拆分数量限制（3 分）</h3>
+            <pre><code>$a = explode('|', 'ADMIN|WORKER|USER');
+$b = explode('|', 'ADMIN|WORKER|USER', 2);
+$c = explode('|', 'ADMIN|WORKER|USER', -1);</code></pre>
+            <p>逐个写出结果数组，并解释 explode 函数第 3 个参数的作用。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 4 题：是否严格比较（3 分）</h3>
+            <pre><code>$a = in_array('1', [1, 2]);
+$b = in_array('1', [1, 2], true);
+$c = in_array('WORKER', ['ADMIN', 'WORKER'], true);</code></pre>
+            <p>判断每次调用返回 true 还是 false，并说明原因；解释 in_array 函数第 1、2、3 个参数的作用。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 5 题：响应体状态与 HTTP 状态（3 分）</h3>
+            <pre><code>$a = response()->json(['code' => 404, 'message' => 'not found']);
+$b = response()->json(
+    ['code' => 404, 'message' => 'not found'],
+    404,
+    ['X-Scene' => 'practice']
+);</code></pre>
+            <p>分别给出 HTTP 状态码，说明响应体 code 是否能自动改变 HTTP 状态；再解释本题使用的 json 前三个参数及 response() 无实参调用的返回对象。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 6 题：请求数据来自哪里（3 分）</h3>
+            <pre><code>$a = $request->query('token');
+$b = $request->post('token', 'missing');
+$c = $request->all(['username', 'avatar']);
+$d = $request->query();</code></pre>
+            <p>给出 $a、$b、$d；说明 $c 包含哪些键和值的类别。解释 Request 的 post、query 方法第 1、2 个参数，以及 all 方法第 1 个参数的作用。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 7 题：验证器的消息与字段名（3 分）</h3>
+            <pre><code>$validator = Validator::make(
+    ['number_guest' => 0],
+    ['number_guest' => 'required|integer|min:1'],
+    ['number_guest.min' => ':attribute至少为:min'],
+    ['number_guest' => '就餐人数']
+);
+$failed = $validator->fails();</code></pre>
+            <p>逐一解释 Validator::make 方法第 1 至第 4 个参数的作用；判断 fails() 的返回值，并说明 messages 与 attributes 的分工。Validator::make 方法的第 3、4 个参数省略时分别使用什么默认值？</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 8 题：允许值验证规则（3 分）</h3>
+            <pre><code>$rules = [
+    'table_type' => ['required', __________],
+];</code></pre>
+            <p>补全下方规则，让 table_type 只能为 A、B、C，并保持必填。说明 Rule::in 方法第 1 个参数的作用，判断传入 D 和 A 时该允许值规则分别是否通过。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="section-title">二、代码阅读与纠错（第 9–16 题，共 32 分）</div>
+        
+        <div class="question">
+            <h3>第 9 题：条件参数与查询结果（4 分）</h3>
+            <pre><code>$rows = Booking::query()
+    ->where('status', '!=', 'CONFIRM')
+    ->where('contact_name', 'like', '%林%')
+    ->get(['id', 'contact_name']);</code></pre>
+            <p>写出结果中的 id；解释两个 where 的前三个参数。再解释 where('status', 'VALID') 与 firstWhere('status', 'VALID') 的区别，以及未显式传入 where 方法的第 4 个参数时，多个条件使用什么方式连接。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 10 题：构造器、模型与集合（4 分）</h3>
+            <pre><code>$a = User::query();
+$b = User::query()->find(1, ['id', 'username']);
+$c = User::query()->find(999);
+$d = User::query()->where('id', 999)->get();
+$e = User::query()->where('id', 999)->first();
+$f = User::all(['id', 'username']);</code></pre>
+            <p>说明下列变量的对象/值类别；对于空结果写清是 null 还是空集合。另外，find 方法第 2 个参数，以及 get、first、all 方法第 1 个参数的作用和默认值是什么？query 是否声明参数？</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 11 题：单个模型不能当集合映射（4 分）</h3>
+            <pre><code>$meal = Mealing::query()->find($mealId)->load('table');
+return response()->json($meal->map(function ($item) {
+    return [
+        'id' => $item['id'],
+        'table_id' => $item['table']['id'],
+    ];
+}));</code></pre>
+            <p>下面代码有两个运行时问题。找出问题，并改成“找不到记录返回 HTTP 404，找到时返回单条用餐信息”的实现。不要使用集合包裹单个模型。最后说明这里的 load 方法由什么对象调用，以及 map 方法应由什么对象调用、其第 1 个参数中的回调通常收到哪些参数。本题保证找到的用餐记录一定有关联桌位。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 12 题：创建模型与直接插入（4 分）</h3>
+            <pre><code>$a = User::query()->create([
+    'username' => 'a',
+    'password' => 'demo',
+    'type' => 'USER',
+    'token' => '',
+]);
+$b = User::query()->insertGetId([
+    'username' => 'b',
+    'password' => 'demo',
+    'type' => 'USER',
+    'token' => '',
+]);</code></pre>
+            <p>比较返回值、fillable、模型事件、created_at/updated_at 的处理。解释 insertGetId 方法第 1、2 个参数的作用；timestamps() 为什么不能保证每次插入都自动填时间？</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 13 题：更新与删除的接收对象（4 分）</h3>
+            <pre><code>$user = User::query()->find(7);
+$updated = $user->update(['token' => 'new-token']);
+$deleted = $user->delete();</code></pre>
+            <p>解释模型 update 方法第 1、2 个参数的默认值和作用；说明两个返回值的类型、数据库变化以及是否经过模型事件流程。delete 是否需要传入 ID？如果 find 没有结果，代码应在哪里补充判断？</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 14 题：字段参数中的错误注释（4 分）</h3>
+            <pre><code>$table->char('table_type');             // 默认长度就是 1
+$table->double('amount', 8, 2);         // 后两个参数设定总位数和小数位
+$table->integer('queue_number', true, true); // 普通、不自增、有符号整数
+$table->time('dining_time', 3);
+$table->timestamps(0);</code></pre>
+            <p>使用文档中的 Laravel 版本，指出前三行注释的问题并修正代码，使目标分别为“固定长度 1 的桌型”“普通 double 金额”“不自增的有符号整数”。再解释 time 方法第 2 个参数、timestamps 方法第 1 个参数的作用。注意区分“传入未声明的额外参数”和“该 API 实际支持这些参数”。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 15 题：最新是按哪个字段定义的（4 分）</h3>
+            <pre><code>$a = Mealing::query()->where('table_id', 3)->latest('id')->first();
+$b = Mealing::query()->where('table_id', 3)->latest()->first(['id', 'table_id']);</code></pre>
+            <p>$a、$b 各返回哪个 ID？解释 latest 方法第 1 个参数的默认值与函数内部回退值，以及 first 在这里的作用。</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+        
+        <div class="question">
+            <h3>第 16 题：嵌套路由与中间件参数（4 分）</h3>
+            <pre><code>Route::prefix('v1')->middleware('auth2:ADMIN')->group(function () {
+    Route::prefix('table')->group(function () {
+        Route::get('/{id}', [TableController::class, 'getTable']);
+        Route::post('/', [TableController::class, 'createTable']);
+        Route::delete('/{id}', [TableController::class, 'deleteTable']);
+    });
+});
+
+Route::redirect('/', '/register.html');</code></pre>
+            <p>写出三条 API 的 HTTP 方法与完整路径；解释 Route 的 get、post、delete 方法第 1、2 个参数的作用，以及 middleware、group 方法各自第 1 个参数的作用；说明重定向入口、目标和默认 HTTP 状态。GET 是否同时支持 HEAD？</p>
+            <label>
+                <textarea placeholder="在此作答..."></textarea>
+            </label>
+        </div>
+    
+    </div>
+    
+    <!-- 在 </body> 之前追加以下脚本与按钮 -->
+    <button id="clearAllBtn" title="清空所有作答并清除本地存储"
+            style="position:fixed;right:20px;bottom:20px;z-index:9999;
+               padding:12px 18px;border:none;border-radius:8px;
+               background:#e74c3c;color:#fff;font-size:14px;cursor:pointer;
+               box-shadow:0 4px 12px rgba(0,0,0,.25);">
+        清空全部作答
+    </button>
+    
+    <script>
+        (function () {
+            const STORAGE_KEY = 'laravel_exercise_answers';
+            const textareas = Array.from(document.querySelectorAll('textarea'));
+
+            // 给每个 textarea 一个稳定的 key（按出现顺序编号）
+            textareas.forEach((ta, i) => {
+                ta.dataset.qid = 'q' + i;
+            });
+
+            // 读取已存数据并回填
+            function loadAnswers() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                    textareas.forEach(ta => {
+                        if (saved[ta.dataset.qid] !== undefined) {
+                            ta.value = saved[ta.dataset.qid];
+                        }
+                    });
+                } catch (e) { /* ignore */
+                }
+            }
+
+            // 保存到 localStorage
+            function saveAnswers() {
+                const data = {};
+                textareas.forEach(ta => {
+                    data[ta.dataset.qid] = ta.value;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            // 监听输入（实时存储）
+            textareas.forEach(ta => ta.addEventListener('input', saveAnswers));
+
+            // 清空按钮
+            document.getElementById('clearAllBtn').addEventListener('click', function () {
+                if (!confirm('确定清空所有作答内容吗？此操作不可撤销。')) return;
+                textareas.forEach(ta => {
+                    ta.value = '';
+                });
+                localStorage.removeItem(STORAGE_KEY);   // 同时清空存储
+            });
+
+            loadAnswers();
+        })();
+    </script>
+</body>
+</html>
